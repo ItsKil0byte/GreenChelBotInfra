@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+resources:
+- ../base
+
+namespace: greenchelbot-wip-cicd
+nameSuffix: -wip-cicd
+
+images:
+- name: greenchelbot-image-name
+  newName: 10.96.55.55:5000/greenchelbot
+  newTag: wip-cicd-86528f88
+
+configMapGenerator:
+- behavior: create
+  literals:
+  - NAME=greenchelbot-wip-cicd
+  name: namespace
+- literals:
+  - NAME=docker-registry-cred-greenchelbot-wip-cicd
+  name: registry-secrets
+
+replacements:
+- source:
+    fieldPath: data.NAME
+    kind: ConfigMap
+    name: namespace
+  targets:
+  - fieldPaths:
+    - metadata.name
+    select:
+      kind: Namespace
+- source:
+    fieldPath: data.NAME
+    kind: ConfigMap
+    name: registry-secrets
+  targets:
+  - fieldPaths:
+    - spec.template.spec.imagePullSecrets.0.name
+    select:
+      kind: Deployment

@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+resources:
+- ../base
+
+namespace: greenchelbot-prod
+nameSuffix: -prod
+
+images:
+- name: greenchelbot-image-name
+  newName: greenchelbot-image-name
+  newTag: latest
+
+configMapGenerator:
+- behavior: create
+  literals:
+  - NAME=greenchelbot-prod
+  name: namespace
+- literals:
+  - NAME=docker-registry-cred-greenchelbot-prod
+  name: registry-secrets
+
+replacements:
+- source:
+    fieldPath: data.NAME
+    kind: ConfigMap
+    name: namespace
+  targets:
+  - fieldPaths:
+    - metadata.name
+    select:
+      kind: Namespace
+- source:
+    fieldPath: data.NAME
+    kind: ConfigMap
+    name: registry-secrets
+  targets:
+  - fieldPaths:
+    - spec.template.spec.imagePullSecrets.0.name
+    select:
+      kind: Deployment
