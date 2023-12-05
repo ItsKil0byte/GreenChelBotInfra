@@ -11,7 +11,7 @@ nameSuffix: -wip-cicd
 images:
 - name: greenchelbot-image-name
   newName: 10.96.55.55:5000/greenchelbot
-  newTag: wip-cicd-86528f88
+  newTag: wip-cicd-f94a6777
 
 configMapGenerator:
 - behavior: create
